@@ -1,0 +1,10 @@
+nohup.out
+
+search_repo/search_result
+search_repo/process_result/**/*.tmp
+search_repo/process_result/**/*.txt
+
+list_repo/list_result
+
+list_tag/list_result
+list_tag/etc/official
