@@ -74,7 +74,6 @@ def parse_tag(base_dir, user_dir, repo_dir, page_file):
     repo_name = repo_dir
 
     if "results" not in data:
-        import pdb;pdb.set_trace()
         print "wrong data format in file: {0}".format(f)
     else:
         for item in data["results"]:

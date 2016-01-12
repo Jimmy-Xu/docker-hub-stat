@@ -21,12 +21,11 @@ def parse_tag(base_dir, user_dir, repo_dir, page_file):
     repo_name = repo_dir
 
     if "results" not in data:
-        import pdb;pdb.set_trace()
         print "wrong data format in file: {0}".format(f)
     else:
         for item in data["results"]:
             item["repo_name"] = repo_name
-            item["namspace"] = user_dir
+            item["namespace"] = user_dir
             g_result.append(item)
 
 def read_tag():
@@ -64,10 +63,10 @@ def import_tag():
         client = MongoClient('localhost', 27017)
         db = client.docker
         print "drop old data in tag collection"
-        db.image_tag.drop()
-        db.create_collection("image_tag")
+        db.list_tag.drop()
+        db.create_collection("list_tag")
         print "start_time:{0}".format(time.strftime('%Y-%m-%d %H:%M:%S'))
-        db.image_tag.insert(g_result)
+        db.list_tag.insert(g_result)
         print "end_time:{0}".format(time.strftime('%Y-%m-%d %H:%M:%S'))
     else:
         print "There is no data to import"
