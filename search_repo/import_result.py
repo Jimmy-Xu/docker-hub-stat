@@ -70,32 +70,37 @@ def parse_and_import(idx, base_dir, search_key, page_file):
                     "name": item["name"]
                 }
             )
-            if found:
-                found["search_key"].append(search_key)
-                found["search_count"] = len(found["search_key"])
-                found["search_key_str"] = "|".join(found["search_key"])
-                #print "found image name '{0}' {1} times".format(item["name"], len(found["search_key"]))
-                result = db.search_repo.update_one(
-                    {
-                        "name": item["name"]
-                    },
-                    {
-                        '$set':{
-                            "search_key": found["search_key"],
-                            "search_count":found["search_count"],
-                            "search_key_str":str(found["search_key_str"])
-                        }
-                    }
-                )
-                if not (result and result.raw_result['ok']):
-                    print "update existed image info failed: {0}".format(item["name"])
-                    continue
-            else:
-                item["search_key"] = []
-                item["search_key"].append(search_key)
-                item["search_key_str"] = "|".join(item["search_key"])
-                item["search_count"] = 1
+            ## simple ##
+            if not found:
                 db.search_repo.insert_one(item)
+
+            ## detail ##
+            # if found:
+            #     found["search_key"].append(search_key)
+            #     found["search_count"] = len(found["search_key"])
+            #     found["search_key_str"] = "|".join(found["search_key"])
+            #     #print "found image name '{0}' {1} times".format(item["name"], len(found["search_key"]))
+            #     result = db.search_repo.update_one(
+            #         {
+            #             "name": item["name"]
+            #         },
+            #         {
+            #             '$set':{
+            #                 "search_key": found["search_key"],
+            #                 "search_count":found["search_count"],
+            #                 "search_key_str":str(found["search_key_str"])
+            #             }
+            #         }
+            #     )
+            #     if not (result and result.raw_result['ok']):
+            #         print "update existed image info failed: {0}".format(item["name"])
+            #         continue
+            # else:
+            #     item["search_key"] = []
+            #     item["search_key"].append(search_key)
+            #     item["search_key_str"] = "|".join(item["search_key"])
+            #     item["search_count"] = 1
+
 
 #### main #####
 read_repo()
