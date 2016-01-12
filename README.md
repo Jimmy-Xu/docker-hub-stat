@@ -1,6 +1,7 @@
 
-- **search_repo**:
-	by `curl -s https://index.docker.io/v1/search?q={SEARCH_KEYWORD}&n=100&page={PAGE}`
+- **search_repo**:  
+	by `curl -s https://index.docker.io/v1/search?q={SEARCH_KEYWORD}&n=100&page={PAGE}`  
+	[detail...](doc/search_repo.md)
 	>result sample:
 
 		{
@@ -19,8 +20,9 @@
 			]
 		}
 
-- **list_repo**:
-	by `curl -s https://hub.docker.com/v2/repositories/{NAMESPACE}/?page_size=${PAGE_SIZE}&page={PAGE}`
+- **list_repo**:  
+	by `curl -s https://hub.docker.com/v2/repositories/{NAMESPACE}/?page_size=${PAGE_SIZE}&page={PAGE}`  
+	[detail...](doc/list_repo.md)  
 	>result sample:
 
 		{
@@ -44,8 +46,9 @@
 			]
 		}
 
-- **get_tag**:
-	by `curl -s https://registry.hub.docker.com/v2/repositories/{REPO_NAME}/tags/`
+- **list_tag**:  
+	by `curl -s https://registry.hub.docker.com/v2/repositories/{REPO_NAME}/tags/`  
+	[detail...](doc/list_tag.md)  
 	>result sample:
 
 		{

@@ -82,7 +82,7 @@ def parse_tag(base_dir, user_dir, repo_dir, page_file):
             g_result.append(item)
 
 def read_tag(flag):
-    IN_DIR = "get_result"
+    IN_DIR = "list_result"
     i = 1
 
     ##print "\nlist dir under dir: {0}".format(IN_DIR)
