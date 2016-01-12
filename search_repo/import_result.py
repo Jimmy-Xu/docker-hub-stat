@@ -28,6 +28,8 @@ def read_repo():
 
     #ensure index(important)
     db.search_repo.create_index("name")
+    db.search_repo.create_index("star_count")
+    db.search_repo.create_index("search_count")
 
     ##print "\nlist dir under dir: {0}".format(IN_DIR)
     #level 1(search key dir)
@@ -42,7 +44,6 @@ def read_repo():
                     i = i + 1
                     try:
                         #print "\t\t {0}:import data from file: {1}".format(i,page_file)
-                        #parse_repo(i, IN_DIR, search_key, page_file)
                         parse_and_import(i, IN_DIR, search_key, page_file)
                     except:
                         continue
