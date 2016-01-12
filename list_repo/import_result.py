@@ -27,7 +27,7 @@ def read_repo(data_dir):
 
     #ensure index(important)
     db.list_repo.create_index("name")
-    db.list_repo.create_index("image_name")
+    db.list_repo.create_index("_image_name")
     db.list_repo.create_index("user")
     db.list_repo.create_index("star_count")
     db.list_repo.create_index("pull_count")
@@ -66,7 +66,7 @@ def parse_and_import(idx, base_dir, search_key, page_file):
         #no dup, multiple insert
         cache_ary=[]
         for item in data["results"]:
-            item["image_name"] = "{0}/{1}".format(str(item["user"]),str(item["name"]) )
+            item["_image_name"] = "{0}/{1}".format(str(item["user"]),str(item["name"]) )
             cache_ary.append(item)
         if cache_ary:
             db.list_repo.insert(cache_ary)

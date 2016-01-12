@@ -7,8 +7,8 @@ import json
 import argparse
 
 import dateutil.parser
-from prettytable import PrettyTable
 from pymongo import MongoClient
+import time
 
 g_result=[]
 
@@ -29,7 +29,9 @@ def read_repo():
     #ensure index(important)
     db.search_repo.create_index("name")
     db.search_repo.create_index("star_count")
-    db.search_repo.create_index("search_count")
+    #db.search_repo.create_index("search_count")
+    db.search_repo.create_index("_namespace")
+    db.search_repo.create_index("_repo_name")
 
     ##print "\nlist dir under dir: {0}".format(IN_DIR)
     #level 1(search key dir)
@@ -38,16 +40,21 @@ def read_repo():
         if os.path.isdir(key_path):
             ##print "\tlist file under dir: {0}".format(key_path)
             #level 2(result dir)
+            start_time=int(1000 * time.time())
+            sys.stdout.write("[{0}] {1} ".format(i,key_path))
             for page_file in os.listdir(key_path):
                 if page_file.endswith('.json'):
                 #if page_file == "1.json":
-                    i = i + 1
                     try:
                         #print "\t\t {0}:import data from file: {1}".format(i,page_file)
+                        sys.stdout.write(".")
                         parse_and_import(i, IN_DIR, search_key, page_file)
                     except:
                         continue
-            # if i>2:
+            i = i + 1
+            end_time=int(1000 * time.time())
+            print " > {0} ms".format(end_time-start_time)
+            # if i>1:
             #     break
 
 def parse_and_import(idx, base_dir, search_key, page_file):
@@ -55,7 +62,7 @@ def parse_and_import(idx, base_dir, search_key, page_file):
     global db
 
     f="{0}/{1}/{2}".format(base_dir,search_key,page_file)
-    print "\t\t\t {0}: read data from file: {1}".format(idx, f)
+    #print "\t\t\t {0}: read data from file: {1}".format(idx, f)
     with open(f) as data_file:
         data = json.load(data_file)
 
@@ -63,18 +70,54 @@ def parse_and_import(idx, base_dir, search_key, page_file):
         print "wrong data format in file: {0}".format(f)
     else:
         for item in data["results"]:
-            item["name"] = str(item["name"])
+            if item["is_official"] == True:
+                item["_namespace"] = "library"
+                item["_repo_name"] = item['name']
+                item['name']='library/' + item['name']
+            else:
+                tmp = item['name'].split('/')
+                item["_namespace"] = tmp[0]
+                item["_repo_name"] = tmp[1]
+
             #check if name is already is existed
-            found = db.search_repo.find_one(
+
+            #way 1
+            found = db.search_repo.find(
                 {
                     "name": item["name"]
+                },
+                {
+                    "_id":1
                 }
-            )
+            ).limit(1)
             ## simple ##
-            if not found:
+            if found.count() == 0:
                 db.search_repo.insert_one(item)
 
+            #way 2
+            # found = db.search_repo.find_one(
+            #     {
+            #         "name": item["name"]
+            #     },
+            #     {
+            #         "_id":1
+            #     }
+            # )
+            # if not found:
+            #     db.search_repo.insert_one(item)
+
+            #way 3
             ## detail ##
+            # found = db.search_repo.find_one(
+            #     {
+            #         "name": item["name"]
+            #     },
+            #     {
+            #         "search_key":1,
+            #         "search_count":1,
+            #         "search_key_str":1
+            #     }
+            # )
             # if found:
             #     found["search_key"].append(search_key)
             #     found["search_count"] = len(found["search_key"])
@@ -103,4 +146,6 @@ def parse_and_import(idx, base_dir, search_key, page_file):
 
 
 #### main #####
+print "start_time:{0}".format(time.strftime('%Y-%m-%d %H:%M:%S'))
 read_repo()
+print "end_time:{0}".format(time.strftime('%Y-%m-%d %H:%M:%S'))

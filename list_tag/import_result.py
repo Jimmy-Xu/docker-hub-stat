@@ -7,7 +7,6 @@ import json
 import argparse
 
 import dateutil.parser
-from prettytable import PrettyTable
 from pymongo import MongoClient
 
 global db
@@ -25,14 +24,16 @@ def parse_and_import(base_dir, user_dir, repo_dir, page_file):
     else:
         cache_ary=[]
         for item in data["results"]:
-            item["repo_name"] = repo_name
-            item["namespace"] = user_dir
-            item["image_name"] = "{0}/{1}".format(item["namespace"],item["repo_name"])
+            item["_repo_name"] = repo_name
+            item["_namespace"] = user_dir
+            item["_image_name"] = "{0}/{1}".format(item["_namespace"],item["_repo_name"])
             cache_ary.append(item)
         if cache_ary:
-            db.list_tag.insert(cache_ary)
+            print "insert {0} image tags into db".format(len(cache_ary))
+            result = db.list_tag.insert(cache_ary)
 
 def read_tag():
+    global db
     IN_DIR = "list_result"
     i = 1
 
@@ -45,8 +46,8 @@ def read_tag():
     db.create_collection("list_tag")
 
     #ensure index(important)
-    db.list_tag.create_index("namespace")
-    db.list_tag.create_index("repo_name")
+    db.list_tag.create_index("_namespace")
+    db.list_tag.create_index("_repo_name")
     db.list_tag.create_index("name")
 
     ##print "\nlist dir under dir: {0}".format(IN_DIR)
@@ -71,6 +72,8 @@ def read_tag():
                                 continue
                 except:
                     continue
+            # if i>1:
+            #     break
         i = i + 1
 
 #### main #####
