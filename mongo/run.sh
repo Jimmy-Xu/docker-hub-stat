@@ -58,7 +58,7 @@ to import list_tag result:
   docker exec -it ${CONTAINER_NAME} bash -c "cd /data/source/list_tag;./import_result.py"
 
 to import list_repo result:
-  docker exec -it ${CONTAINER_NAME} bash -c "cd /data/source/list_repo;./import_result.py -data_dir=20160111"
+  docker exec -it ${CONTAINER_NAME} bash -c "cd /data/source/list_repo;./import_result.py --data_dir=20160111"
 
 to import search_repo result:
   docker exec -it ${CONTAINER_NAME} bash -c "cd /data/source/search_repo;./import_result.py"

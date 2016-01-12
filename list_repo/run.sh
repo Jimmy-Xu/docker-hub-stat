@@ -9,7 +9,7 @@ function show_usage(){
 
 usage: ./run.sh <dir_name>
 <dir_name>: sub_dir under ./result
-eg: ./run.sh 20160109
+eg: ./run.sh 20160111
 
 -----------------------
 [available]:
@@ -27,6 +27,8 @@ fi
 #check input parameter
 SRC_DIR="${SRC_BASE}/$1/"
 USER_LIST="${SRC_DIR}/user.txt"
+NAMESPACE_LIST="etc/namespace.txt"
+
 if [ ! -d ${SRC_DIR} ];then
   echo "${SRC_DIR} not found!"
   show_usage
@@ -37,8 +39,11 @@ else
   fi
 fi
 
+#generate ${NAMESPACE_LIST}
+cat etc/official.txt ${USER_LIST} > ${NAMESPACE_LIST}
+
 #start
-total=$(cat ${USER_LIST}|wc -l)
+total=$(cat ${NAMESPACE_LIST}|wc -l)
 OUT_BASE="./list_result/$1"
 while read NAMESPACE
 do
@@ -57,5 +62,5 @@ do
     #sleep 1
   fi
   total=$((total-1))
-done < ${USER_LIST}
+done < ${NAMESPACE_LIST}
 echo "All Done"

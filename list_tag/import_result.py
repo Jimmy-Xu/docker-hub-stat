@@ -10,10 +10,10 @@ import dateutil.parser
 from prettytable import PrettyTable
 from pymongo import MongoClient
 
-g_result=[]
+global db
 
-def parse_tag(base_dir, user_dir, repo_dir, page_file):
-    global g_result
+def parse_and_import(base_dir, user_dir, repo_dir, page_file):
+    global db
     f="{0}/{1}/{2}/{3}".format(base_dir,user_dir,repo_dir,page_file)
     #print "read data from file: {0}".format(f)
     with open(f) as data_file:
@@ -23,14 +23,31 @@ def parse_tag(base_dir, user_dir, repo_dir, page_file):
     if "results" not in data:
         print "wrong data format in file: {0}".format(f)
     else:
+        cache_ary=[]
         for item in data["results"]:
             item["repo_name"] = repo_name
             item["namespace"] = user_dir
-            g_result.append(item)
+            item["image_name"] = "{0}/{1}".format(item["namespace"],item["repo_name"])
+            cache_ary.append(item)
+        if cache_ary:
+            db.list_tag.insert(cache_ary)
 
 def read_tag():
     IN_DIR = "list_result"
     i = 1
+
+    #connect to mongo
+    client = MongoClient('localhost', 27017)
+    db = client.docker
+
+    #re-create list_tag
+    db.drop_collection("list_tag")
+    db.create_collection("list_tag")
+
+    #ensure index(important)
+    db.list_tag.create_index("namespace")
+    db.list_tag.create_index("repo_name")
+    db.list_tag.create_index("name")
 
     ##print "\nlist dir under dir: {0}".format(IN_DIR)
     #level 1(user dir)
@@ -49,28 +66,14 @@ def read_tag():
                             try:
                                 page_path = os.path.join(page_path, page_file)
                                 if os.path.isfile(page_path):
-                                    parse_tag(IN_DIR, user_dir, repo_dir, page_file)
+                                    parse_and_import(IN_DIR, user_dir, repo_dir, page_file)
                             except:
                                 continue
                 except:
                     continue
         i = i + 1
 
-def import_tag():
-    global g_result
-
-    if g_result:
-        client = MongoClient('localhost', 27017)
-        db = client.docker
-        print "drop old data in tag collection"
-        db.list_tag.drop()
-        db.create_collection("list_tag")
-        print "start_time:{0}".format(time.strftime('%Y-%m-%d %H:%M:%S'))
-        db.list_tag.insert(g_result)
-        print "end_time:{0}".format(time.strftime('%Y-%m-%d %H:%M:%S'))
-    else:
-        print "There is no data to import"
-
 #### main #####
+print "start_time:{0}".format(time.strftime('%Y-%m-%d %H:%M:%S'))
 read_tag()
-import_tag()
+print "end_time:{0}".format(time.strftime('%Y-%m-%d %H:%M:%S'))
