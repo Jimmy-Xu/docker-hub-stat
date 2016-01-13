@@ -50,7 +50,7 @@ function do_list(){
 
       # query first page
       START_TIME=$(date "+%s")
-      curl -sf ${_URL} > ${_OUT_FILE}
+      python -mjson.tool <(curl -sf ${_URL}) > ${_OUT_FILE}
       END_TIME=$(date "+%s")
     fi
 

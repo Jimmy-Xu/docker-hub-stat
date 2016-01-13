@@ -54,7 +54,7 @@ function search_single_PAGE(){
   show_message log "_OUT_TXT: ${_OUT_TXT}"
 
   #get single page
-  curl -s ${_URL} > ${_OUT_JSON}
+  python -mjson.tool <(curl -s ${_URL}) > ${_OUT_JSON}
   if [ $? -ne 0 ];then
     show_message error ">: ${_URL} error"
     #check file size

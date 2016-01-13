@@ -48,7 +48,7 @@ function do_list(){
     show_message log "URL: ${_URL}"
     show_message log "RLT_FILE: ${_RLT_FILE}"
     #start curl
-    curl -s -S "${_URL}"  > ${_RLT_FILE}
+    python -mjson.tool <(curl -s -S "${_URL}") > ${_RLT_FILE}
     #check curl
     if [ $? -ne 0 ];then
       show_message error " => curl "
