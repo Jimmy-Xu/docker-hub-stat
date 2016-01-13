@@ -64,7 +64,7 @@ function search_all_page(){
           p_cnt=$(ps -ef |grep "search_repo.sh" | grep -v grep | wc -l)
         done
         ./search_repo.sh ${p} ${FLAG} ${total_namespace} &
-        sleep 1
+        sleep 0.5
       done
       #for p in
     done

@@ -151,7 +151,7 @@ function get_tag() {
       done
       show_message log "start execute: ./list.sh ${REPO} ${p}"
       ./list_tag.sh ${REPO} ${p} &
-      sleep 1
+      sleep 0.5
     done
     total=$((total - 1))
   done < ${CFG_FILE}

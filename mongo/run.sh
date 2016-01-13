@@ -65,14 +65,20 @@ to import list_tag result:
   docker exec -it ${CONTAINER_NAME} bash -c "cd /data/source/list_tag;./import_result.py"
 
 [export]
-  docker exec -it ${CONTAINER_NAME} bash -c "mongoexport --host 127.0.0.1 --db docker --collection search_repo --fields name,_namespace,_repo_name,is_official,is_trusted,star_count,is_automated --type=csv > /data/source/search_repo.csv"
-  docker exec -it ${CONTAINER_NAME} bash -c "mongoexport --host 127.0.0.1 --db docker --collection list_repo --fields _image_name,namespace,name,star_count,pull_count,is_automated,status,last_updated --type=csv > /data/source/list_repo-full.csv"
-  docker exec -it ${CONTAINER_NAME} bash -c "mongoexport --host 127.0.0.1 --db docker --collection list_tag --fields _image_name,_namespace,_repo_name,name,full_size,v2 --type=csv > /data/source/list_tag.csv"
+  docker exec -it ${CONTAINER_NAME} bash -c "mongoexport --host 127.0.0.1 --db docker --collection search_repo --fields name,_namespace,_repo_name,is_official,is_trusted,star_count,is_automated --type=csv > /data/source/csv/search_repo.csv"
+  docker exec -it ${CONTAINER_NAME} bash -c "mongoexport --host 127.0.0.1 --db docker --collection list_repo --fields _image_name,namespace,name,star_count,pull_count,is_automated,status,last_updated --type=csv > /data/source/csv/list_repo-full.csv"
+  docker exec -it ${CONTAINER_NAME} bash -c "mongoexport --host 127.0.0.1 --db docker --collection list_tag --fields _image_name,_namespace,_repo_name,name,full_size,v2 --type=csv > /data/source/csv/list_tag.csv"
 
 [state]
-  docker exec -it ${CONTAINER_NAME} bash -c "mongoexport --host 127.0.0.1 --db docker --collection list_repo --fields _image_name,namespace,name,star_count,pull_count,is_automated,status --query '{star_count:{\$gt:0}}' --type=csv > /data/source/list_repo-main.csv"
+  docker exec -it ${CONTAINER_NAME} bash -c "mongoexport --host 127.0.0.1 --db docker --collection list_repo --fields _image_name,namespace,name,star_count,pull_count,is_automated,status --query '{star_count:{\$gt:0}}' --type=csv > /data/source/csv/list_repo-main.csv"
   docker exec -it ${CONTAINER_NAME} bash
     mongo 127.0.0.1:27017/docker --quiet --eval "DBQuery.shellBatchSize=1000;print('id,count');db.list_repo.aggregate([{'\$group' : {_id:'\$star_count', count:{\$sum:1}}}]).forEach(function(item){print(item._id+','+item.count)})" > data/source/list_repo-stat.csv
     mongo 127.0.0.1:27017/docker --quiet --eval "DBQuery.shellBatchSize=1000;print('id,count');db.list_repo.aggregate([{'\$group' : {_id:'\$namespace', min_last_updated:{\$min:'\$last_updated'}}}]).forEach(function(item){print(item._id+','+item.min_last_updated)})" > data/source/list_repo-namespace.csv
     mongo 127.0.0.1:27017/docker --quiet --eval "DBQuery.shellBatchSize=1000;print('id,count');db.list_repo.aggregate([{'\$group' : {_id:'\$_image_name', min_last_updated:{\$min:'\$last_updated'}}}]).forEach(function(item){print(item._id+','+item.min_last_updated)})" > data/source/list_repo-image_name.csv
+
+[start mongo web ui]
+  docker run -it --rm --link mongo:mongo -p 8000:8081 knickers/mongo-express
+  or
+  docker run -d -p 8000:80 --link mongo:db --name rockmongo webts/rockmongo
+
 EOF

@@ -59,7 +59,7 @@ do
   if [ ! -f ${OUT_DIR}/end ];then
     #not fetched
     ./list_repo.sh $1 ${NAMESPACE} ${total} &
-    #sleep 1
+    #sleep 0.5
   fi
   total=$((total-1))
 done < ${NAMESPACE_LIST}
