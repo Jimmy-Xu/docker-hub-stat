@@ -7,7 +7,7 @@ IMAGE_TAG="3.2"
 IMAGE_NAME=${NAMESPACE}/${REPO_NAME}:${IMAGE_TAG}
 
 #container and image name
-CONTAINER_NAME="mongo"
+CONTAINER_NAME="hub-mongo"
 
 #volume
 LOCAL_DB_DIR=`pwd`/db
@@ -33,7 +33,7 @@ docker build -t ${IMAGE_NAME} .
 
 ############################################################
 #ensure old container not exist
-docker ps -a | grep " mongo$"
+docker ps -a | grep " ${CONTAINER_NAME}$"
 if [ $? -eq 0 ];then
   docker rm -f ${CONTAINER_NAME}
 fi
@@ -77,8 +77,8 @@ to import list_tag result:
     mongo 127.0.0.1:27017/docker --quiet --eval "DBQuery.shellBatchSize=1000;print('id,count');db.list_repo.aggregate([{'\$group' : {_id:'\$_image_name', min_last_updated:{\$min:'\$last_updated'}}}]).forEach(function(item){print(item._id+','+item.min_last_updated)})" > data/source/list_repo-image_name.csv
 
 [start mongo web ui]
-  docker run -it --rm --link mongo:mongo -p 8000:8081 knickers/mongo-express
+  docker run -it --rm --link ${CONTAINER_NAME}:mongo -p 8000:8081 knickers/mongo-express
   or
-  docker run -d -p 8000:80 --link mongo:db --name rockmongo webts/rockmongo
+  docker run -d -p 8000:80 --link ${CONTAINER_NAME}:db --name rockmongo webts/rockmongo
 
 EOF
