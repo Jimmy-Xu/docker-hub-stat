@@ -61,9 +61,14 @@ docker run -d --name hub-phpmyadmin -e MYSQL_HOST=${CONTAINER_HOSTNAME}:${CONTAI
 cat <<EOF
 -------------------------------------------------
 [test mysql cli]
-  docker run -it --link ${CONTAINER_NAME}:mysql --rm mysql sh -c 'exec mysql -h\${MYSQL_PORT_3306_TCP_ADDR} -P\${MYSQL_PORT_3306_TCP_PORT} -uroot -p\${MYSQL_ENV_MYSQL_ROOT_PASSWORD}'
+  docker run -it --link ${CONTAINER_NAME}:mysql --rm mysql:5.7.10 sh -c 'exec mysql -h\${MYSQL_PORT_3306_TCP_ADDR} -P\${MYSQL_PORT_3306_TCP_PORT} -uroot -p\${MYSQL_ENV_MYSQL_ROOT_PASSWORD}'
 
-
+[import csv to table]
+  docker exec -it ${CONTAINER_NAME} bash
+  #import data from csv file
+  mysqlimport --ignore-lines=1 --fields-terminated-by=, --local -u root -p docker list_repo.csv
+  #show table structure
+  mysql -u root -paaa123aa --database docker -e "show create table list_repo"
 
 
 EOF
