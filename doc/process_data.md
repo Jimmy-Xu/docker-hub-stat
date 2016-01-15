@@ -1,4 +1,8 @@
-import data to mongo, then export to csv
+Import data into database, then do stat with SQL
+=========================================================
+
+
+Import data to mongo, then export to csv
 -----------------------------
 
 ### start container: hub-mongo
@@ -44,13 +48,41 @@ import csv to mysql
 
 ### create database and tables
 
-  #create database
-  $ docker exec -it ${CONTAINER_NAME} bash -c "mysql -u root -paaa123aa < /data/source/mysql/sql/create_table.sql"
+    #create database
+    $ docker exec -it ${CONTAINER_NAME} bash -c "mysql -u root -paaa123aa < /data/source/mysql/sql/create_table.sql"
 
 ### import csv to table
 
-  $ docker exec -it ${CONTAINER_NAME} bash -c "mysqlimport --ignore-lines=1 --fields-terminated-by=, --local -u root -paaa123aa docker /data/source/csv/search_repo.csv"
+    # import search_repo from search_repo.csv
+    $ docker exec -it ${CONTAINER_NAME} bash -c "mysqlimport --ignore-lines=1 --fields-terminated-by=, --local -u root -paaa123aa docker /data/source/csv/search_repo.csv"
 
-  $ docker exec -it ${CONTAINER_NAME} bash -c "mysqlimport --ignore-lines=1 --fields-terminated-by=, --local -u root -paaa123aa docker /data/source/csv/list_repo.csv"
+    # import list_repo from list_repo.csv
+    $ docker exec -it ${CONTAINER_NAME} bash -c "mysqlimport --ignore-lines=1 --fields-terminated-by=, --local -u root -paaa123aa docker /data/source/csv/list_repo.csv"
 
-  $ docker exec -it ${CONTAINER_NAME} bash -c "mysqlimport --ignore-lines=1 --fields-terminated-by=, --local -u root -paaa123aa docker /data/source/csv/list_tag.csv"
+    # import list_tag from list_tag.csv
+    $ docker exec -it ${CONTAINER_NAME} bash -c "mysqlimport --ignore-lines=1 --fields-terminated-by=, --local -u root -paaa123aa docker /data/source/csv/list_tag.csv"
+
+
+statistics
+---------------------------------------------------
+
+### Top 25 star_count
+
+    SELECT _image_name, star_count FROM list_repo order by star_count desc limit 25
+
+### Top 25 pull_count
+
+    SELECT _image_name, pull_count FROM list_repo order by pull_count desc limit 25
+
+### All official image full_size
+
+    SELECT _image_name,round( full_size/1024/1024,2) as MB FROM list_tag where name="latest" and _namespace="library" order by full_size desc
+
+### Partition statistics  
+
+    SELECT '0start' as star,sum(CASE when star_count=0 then 1 else 0 end)/count(*)*100 AS 'percent' from list_repo
+    union SELECT '1start',sum(CASE when star_count=1 then 1 else 0 end)/count(*)*100 from list_repo
+    union SELECT '2start',sum(CASE when star_count=2 then 1 else 0 end)/count(*)*100 from list_repo
+    union SELECT '3start',sum(CASE when star_count=3 then 1 else 0 end)/count(*)*100 from list_repo
+    union SELECT '4start',sum(CASE when star_count=4 then 1 else 0 end)/count(*)*100 from list_repo
+    union SELECT 'other',sum(CASE when star_count>=5 then 1 else 0 end)/count(*)*100 from list_repo;
