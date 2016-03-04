@@ -2,7 +2,7 @@
 
 #image name
 REPO_NAME="mysql"
-IMAGE_TAG="5.7.10"
+IMAGE_TAG="5.7.11"
 IMAGE_NAME=${REPO_NAME}:${IMAGE_TAG}
 MYSQL_ROOT_PASSWORD="aaa123aa"
 
@@ -56,12 +56,13 @@ echo "start mysql"
 docker run -d --name ${CONTAINER_NAME} --hostname=${CONTAINER_HOSTNAME} -e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} -v ${LOCAL_DB_DIR}:/var/lib/mysql -v ${SRC_DATA_DIR}:/data/source ${REPO_NAME}:${IMAGE_TAG}
 
 echo "start phpmyadmin"
-docker run -d --name hub-phpmyadmin -e MYSQL_HOST=${CONTAINER_HOSTNAME}:${CONTAINER_PORT} --link ${CONTAINER_NAME}:mysql -p 8080:80 nazarpc/phpmyadmin
+docker run -d --name hub-phpmyadmin --link ${CONTAINER_NAME}:db -p 8880:80 phpmyadmin/phpmyadmin
+
 
 cat <<EOF
 -------------------------------------------------
 [test mysql cli]
-  docker run -it --link ${CONTAINER_NAME}:mysql --rm mysql:5.7.10 sh -c 'exec mysql -h\${MYSQL_PORT_3306_TCP_ADDR} -P\${MYSQL_PORT_3306_TCP_PORT} -uroot -p\${MYSQL_ENV_MYSQL_ROOT_PASSWORD}'
+  docker run -it --link ${CONTAINER_NAME}:mysql --rm mysql:5.7.11 sh -c 'exec mysql -h\${MYSQL_PORT_3306_TCP_ADDR} -P\${MYSQL_PORT_3306_TCP_PORT} -uroot -p\${MYSQL_ENV_MYSQL_ROOT_PASSWORD}'
 
 [create database and table]
   docker exec -it ${CONTAINER_NAME} bash -c "mysql -u root -paaa123aa < /data/source/mysql/sql/create_table.sql"
@@ -79,6 +80,6 @@ cat <<EOF
 
 [use phpMyAdmin]
 
-  open http://<host_ip>:8080 in web browser, login with root:aaa123aa
+  open http://<host_ip>:8880 in web browser, login with root:aaa123aa
 
 EOF

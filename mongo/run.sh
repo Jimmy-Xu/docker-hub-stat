@@ -3,7 +3,7 @@
 #image name
 NAMESPACE="xjimmyshcn"
 REPO_NAME="mongo"
-IMAGE_TAG="3.2"
+IMAGE_TAG="3.2.3"
 IMAGE_NAME=${NAMESPACE}/${REPO_NAME}:${IMAGE_TAG}
 
 #container and image name

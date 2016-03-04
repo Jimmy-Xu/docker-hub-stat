@@ -1,4 +1,4 @@
-FROM mongo:3.2
+FROM mongo:3.2.3
 MAINTAINER Jimmy Xu <xjimmyshcn@gmail.com>
 
 ADD etc/apt/sources.list.wheezy /etc/apt/sources.list

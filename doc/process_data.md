@@ -8,7 +8,7 @@ Import data to mongo, then export to csv
 ### start container: hub-mongo
 
     $ cd mongo
-    $ docker build -t xjimmyshcn/mongo:3.2 .
+    $ docker build --rm -t xjimmyshcn/mongo:3.2.3 .
     $ ./run.sh
 
 ### imort data
@@ -44,7 +44,7 @@ import csv to mysql
     $ ./run.sh
 
     #test mysql cli
-    $ docker run -it --link ${CONTAINER_NAME}:mysql --rm mysql:5.7.10 sh -c 'exec mysql -h\${MYSQL_PORT_3306_TCP_ADDR} -P\${MYSQL_PORT_3306_TCP_PORT} -uroot -p\${MYSQL_ENV_MYSQL_ROOT_PASSWORD}'
+    $ docker run -it --link ${CONTAINER_NAME}:mysql --rm mysql:5.7.11 sh -c 'exec mysql -h\${MYSQL_PORT_3306_TCP_ADDR} -P\${MYSQL_PORT_3306_TCP_PORT} -uroot -p\${MYSQL_ENV_MYSQL_ROOT_PASSWORD}'
 
 ### create database and tables
 
