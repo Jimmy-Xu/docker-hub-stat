@@ -13,4 +13,4 @@ mongo/db
 mysql/db
 
 imagelayers/result
-imagelayers/etc/image.lst
+imagelayers/etc/image_tofetch.lst
