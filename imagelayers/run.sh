@@ -44,7 +44,7 @@ function get_tag(){
 }
 
 function get_layer(){
-  ./script/get_layer.sh
+  ./script/get_layer.sh $1
 }
 
 function show_usage(){
@@ -54,10 +54,10 @@ usage:
   ./run.sh <action>
 
 <action>:
-  start_container   #start imagelayer api server container
-  get_tag           #get image tag list
-  get_layer         #get image layer
-
+  start_container   # start imagelayer api server container
+  get_tag           # get image tag list
+  get_layer_latest  # get layer for image's latest tag(faster)
+  get_layer_all     # get layer for image's all tag
 EOF
 }
 
@@ -68,8 +68,11 @@ case $1 in
   get_tag)
     get_tag
     ;;
-  get_layer)
-    get_layer
+  get_layer_all)
+    get_layer "all"
+    ;;
+  get_layer_latest)
+    get_layer "latest"
     ;;
   *)
     show_usage
