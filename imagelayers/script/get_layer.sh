@@ -50,11 +50,11 @@ echo -n > etc/tag_tofetch.lst #clear list
 for f in $(find result/tags -name "*.json" -type f)
 do
   IDX=$(( IDX + 1 ))
-  echo
-  echo "---------$f----------"
+  #echo
+  #echo "---------$f----------"
   tag_list=$(jq . $f 2>/dev/null | awk -F"[\":]" '{if($2!="")print $2 }')
   if [ "${tag_list}" == "" ];then
-    echo "$f is not json, skip"
+    echo "[ ${IDX} ] [ ${f} ] is not json, skip"
     continue
   fi
   layer_d=${f/.json/}
@@ -86,18 +86,18 @@ do
     # if latest tag exist, then use latest, otherwise use the last tag
     LATEST=$(echo ${tag_list} | grep latest 2>/dev/null | wc -l)
     if [ ${LATEST} -ne 0 ];then
-      echo "[ ${repo_name} latest ] exist, use 'latest' tag"
+      #echo "[ ${IDX} ] [ ${repo_name} latest ] exist, use 'latest' tag"
       _TAG="latest"
     else
-      echo "[ ${repo_name} latest ] not exist, get the last tag"
+      #echo "[ ${IDX} ] [ ${repo_name} latest ] not exist, get the last tag"
       _TAG=$(echo ${tag_list} | tail -n1 | awk '{print $NF}' )
     fi
     jq . ${layer_d}/${_TAG}.json >/dev/null 2>&1
     if [ $? -ne 0 ];then
-      echo "${layer_d}/${_TAG}.json is invalid, need re-fetch"
+      echo "[ ${IDX} ] [ ${layer_d}/${_TAG}.json ] is invalid, need re-fetch"
       echo ${repo_name} ${_TAG} >> etc/tag_tofetch.lst
     else
-      echo "${layer_d}/${_TAG}.json already exist, skip"
+      echo "[ ${IDX} ] [ ${layer_d}/${_TAG}.json ] already exist, skip"
     fi
   fi
 done

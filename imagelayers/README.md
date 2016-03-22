@@ -2,7 +2,23 @@
 
 ## start imagelayers container
 ```
-./run.sh
+//show usage
+$ ./run.sh
+usage:
+  ./run.sh <action>
+  <action>:
+    start_container   # start imagelayer api server container
+    get_tag           # get image tag list
+    get_layer_latest  # get layer for image's latest tag(faster)
+    get_layer_all     # get layer for image's all tag
+
+//start container
+$ ./run.sh start_container
+
+//check container
+$ docker ps | grep "imagelayers$"
+  CONTAINER ID    IMAGE                    COMMAND             CREATED         STATUS         PORTS                    NAMES
+  06eb3da1af28    xjimmyshcn/imagelayers   "go run main.go"    11 hours ago    Up 11 hours    0.0.0.0:8008->8888/tcp   imagelayers
 ```
 
 ## invoke imagelayers api
@@ -21,7 +37,7 @@ $ curl -s http://127.0.0.1:8008/registry/images/busybox/tags | jq .
 
 
 //get layers
-$ curl -s -XPOST -d '{"repos":[{"name":"busybox","tag":"1.24"}]}' http://127.0.0.1:8008/registry/analyze
+$ curl -s -XPOST -d '{"repos":[{"name":"busybox","tag":"1.24"}]}' http://127.0.0.1:8008/registry/analyze | jq .
   [
     {
       "repo": {
@@ -39,14 +55,61 @@ $ curl -s -XPOST -d '{"repos":[{"name":"busybox","tag":"1.24"}]}' http://127.0.0
           ...
 ```
 
-# imagelayers.io
+## batch get tag
+```
+//prepare image list `etc/image_full.lst`
+$ head -n 10 etc/image_full.lst
+  library/busybox
+  library/ubuntu
+  library/nginx
+  library/swarm
+  library/registry
+  library/redis
+  library/mysql
+  library/mongo
+  library/node
+  library/postgres
 
-> invoke online imagelayers
+//start batch get tag( each time run this command, it will skip the repo which was already getted )
+$ ./run.sh get_tag
+
+//view result `result/tags/`
+$ tree result/tags/library | head -n 10
+  result/tags/library
+  ├── aerospike.json
+  ├── alpine.json
+  ├── arangodb.json
+  ├── bonita.json
+  ├── buildpack-deps.json
+  ├── busybox.json
+  ├── cassandra.json
+  ├── celery.json
+  ├── centos.json
+
+```
+
+## batch get layers
+
+> this operation is based on `./run.sh get_tag`
+
+```
+//each time run this command, it will skip the tag which was already getted
+
+//only get latest tag(faster)
+$ ./run.sh get_layer_latest
+or
+// get all tags
+$ ./run.sh get_layer_all
+```
+
+# use imagelayers.io
+
+> invoke online imagelayers api
 
 ```
 //get tags
 $ curl -s https://imagelayers.io:8888/registry/images/busybox/tags | jq .
 
 //get layers
-$ curl -s -XPOST -d '{"repos":[{"name":"busybox","tag":"1.24"}]}' https://imagelayers.io:8888/registry/analyze
+$ curl -s -XPOST -d '{"repos":[{"name":"busybox","tag":"1.24"}]}' https://imagelayers.io:8888/registry/analyze | jq .
 ```
