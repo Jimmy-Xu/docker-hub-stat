@@ -15,3 +15,4 @@ mysql/db
 imagelayers/result
 imagelayers/etc/image_tofetch.lst
 imagelayers/etc/tag_tofetch.lst
+imagelayers/etc/layer_tofetch.lst

@@ -161,7 +161,7 @@ $ ./run.sh stat_layer | head -n 10
 
 
 //result data
-result/stat/stat_layer.csv
+result/stat/v1/stat_layer.csv
 ```
 
 ### import result/stat/ to mysql
@@ -169,7 +169,7 @@ result/stat/stat_layer.csv
 > base on container `hub-mysql`, [how to run hub-mysql](doc/process_data.md#start-container-hub-mysql-and-hub-phpmyadmin)
 
 ```
-$ docker exec -it hub-mysql bash -c "mysqlimport --ignore-lines=1 --fields-terminated-by=, --local -u root -paaa123aa docker /data/source/imagelayers/result/stat/stat_layer.csv"
+$ docker exec -it hub-mysql bash -c "mysqlimport --ignore-lines=1 --fields-terminated-by=, --local -u root -paaa123aa docker /data/source/imagelayers/result/stat/v1/stat_layer.csv"
     docker.stat_layer: Records: 2254  Deleted: 0  Skipped: 0  Warnings: 0
 ```
 

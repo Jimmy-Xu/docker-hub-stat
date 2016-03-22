@@ -39,6 +39,7 @@ EOF
 
 }
 
+#-----------------------------
 function get_tag(){
   ./script/get_tag.sh
 }
@@ -47,9 +48,15 @@ function get_layer(){
   ./script/get_layer.sh $1
 }
 
-function stat_layer(){
-  ./script/stat_layer.sh
+function stat_layer_v1(){
+  ./script/stat_layer_v1.sh
 }
+
+#-----------------------------
+function stat_layer_v2(){
+  ./script/stat_layer_v2.sh
+}
+
 
 function show_usage(){
   cat <<EOF
@@ -58,16 +65,17 @@ usage:
   ./run.sh <action>
 
 <action>:
-  -------------------------------------------------------------
+  -----------------------------------------------------------------------------------
   start_container   # start imagelayer api server container
-  -------------------------------------------------------------
+  -----------------------------------------------------------------------------------
   get_tag           # get image tag list
-  -------------------------------------------------------------
+  -----------------------------------------------------------------------------------
   get_layer_latest  # get layer for image's latest tag(faster)
   get_layer_all     # get layer for image's all tag
-  -------------------------------------------------------------
-  stat_layer        # stat layer of images's tag(result/layers/)
-  -------------------------------------------------------------
+  stat_layer_v1     # stat layer of image's tag(result/layers/)
+  -----------------------------------------------------------------------------------
+  stat_layer_v2     # stat layer of image's tag(script/download-frozen-image-v2.sh)
+  -----------------------------------------------------------------------------------
 EOF
 }
 
@@ -91,8 +99,11 @@ case $1 in
   get_layer_latest)
     get_layer "latest"
     ;;
-  stat_layer)
-    stat_layer
+  stat_layer_v1)
+    stat_layer_v1
+    ;;
+  stat_layer_v2)
+    stat_layer_v2
     ;;
   *)
     show_usage

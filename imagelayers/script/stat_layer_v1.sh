@@ -1,8 +1,9 @@
 #!/bin/bash
+## base on the result of get_layer.sh
 
 WORKDIR=$(cd `dirname $0`; cd ..; pwd)
 LAYER_DIR="result/layers"
-OUTPUT="result/stat"
+OUTPUT="result/stat/v1"
 cd ${WORKDIR}/${LAYER_DIR}
 mkdir -p ${WORKDIR}/${OUTPUT}
 echo "repo,tag,layer_count,layer_size," > ${WORKDIR}/${OUTPUT}/stat_layer.csv
