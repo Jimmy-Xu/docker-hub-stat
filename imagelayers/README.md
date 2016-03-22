@@ -11,7 +11,9 @@ get image tag and layer, stat layer
 	- [fetch tag and layer data](#fetch-tag-and-layer-data)
 		- [batch get tag](#batch-get-tag)
 		- [batch get layers](#batch-get-layers)
-	- [stat layers](#stat-layers)
+	- [process result](#process-result)
+		- [stat layer](#stat-layer)
+		- [import result/stat/ to mysql](#import-resultstat-to-mysql)
 - [use imagelayers.io](#use-imagelayersio)
 
 <!-- /TOC -->
@@ -140,7 +142,9 @@ or
 $ ./run.sh get_layer_all
 ```
 
-## stat layers
+## process result
+
+### stat layer
 ```
 $ ./run.sh stat_layer | head -n 10
   library/nginx,latest,8
@@ -153,6 +157,18 @@ $ ./run.sh stat_layer | head -n 10
   library/python,latest,13
   library/node,latest,10
   library/alpine,latest,1
+
+//result data
+result/stat/stat_layer.csv
+```
+
+### import result/stat/ to mysql
+
+> base on container `hub-mysql`, [how to run hub-mysql](doc/process_data.md#start-container-hub-mysql-and-hub-phpmyadmin)
+
+```
+$ docker exec -it hub-mysql bash -c "mysqlimport --ignore-lines=1 --fields-terminated-by=, --local -u root -paaa123aa docker /data/source/imagelayers/result/stat/stat_layer.csv"
+    docker.stat_layer: Records: 2254  Deleted: 0  Skipped: 0  Warnings: 0
 ```
 
 # use imagelayers.io
