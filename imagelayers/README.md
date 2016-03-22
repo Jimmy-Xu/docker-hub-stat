@@ -146,17 +146,19 @@ $ ./run.sh get_layer_all
 
 ### stat layer
 ```
+//return (<repo>, <tag>, <layer_count>, <layer_size>)
 $ ./run.sh stat_layer | head -n 10
-  library/nginx,latest,8
-  library/busybox,latest,2
-  library/redis,latest,17
-  library/postgres,latest,22
-  library/registry,latest,14
-  library/ruby,latest,18
-  library/java,latest,14
-  library/python,latest,13
-  library/node,latest,10
-  library/alpine,latest,1
+	library/nginx,latest,8,190512459,
+	library/busybox,latest,2,1112820,
+	library/redis,latest,17,177586452,
+	library/postgres,latest,22,264567018,
+	library/registry,latest,14,422909893,
+	library/ruby,latest,18,725484111,
+	library/java,latest,14,642897103,
+	library/python,latest,13,689550652,
+	library/node,latest,10,644302697,
+	library/alpine,latest,1,4797951,
+
 
 //result data
 result/stat/stat_layer.csv

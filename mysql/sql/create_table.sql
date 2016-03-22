@@ -1,5 +1,7 @@
 -- ------------------------------------------------------
 -- mysqldump -u root -paaa123aa -d docker
+-- or
+-- docker exec -it hub-mysql bash -c "mysqldump -u root -paaa123aa -d docker"
 -- ------------------------------------------------------
 
 -- MySQL dump 10.13  Distrib 5.7.11, for Linux (x86_64)
@@ -85,6 +87,7 @@ CREATE TABLE `stat_layer` (
   `repo` varchar(255) NOT NULL,
   `tag` varchar(255) NOT NULL,
   `layer_count` int(11) NOT NULL,
+  `layer_size` int(11) NOT NULL,
   KEY `repo` (`repo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -101,6 +104,7 @@ SET character_set_client = utf8;
  1 AS `repo`,
  1 AS `tag`,
  1 AS `layer_count`,
+ 1 AS `layer_size`,
  1 AS `star_count`,
  1 AS `pull_count`*/;
 SET character_set_client = @saved_cs_client;
@@ -118,7 +122,7 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `vw_image_layer` AS select `l`.`repo` AS `repo`,`l`.`tag` AS `tag`,`l`.`layer_count` AS `layer_count`,`r`.`star_count` AS `star_count`,`r`.`pull_count` AS `pull_count` from (`list_repo` `r` join `stat_layer` `l`) where (`r`.`_image_name` = `l`.`repo`) */;
+/*!50001 VIEW `vw_image_layer` AS select `l`.`repo` AS `repo`,`l`.`tag` AS `tag`,`l`.`layer_count` AS `layer_count`,`l`.`layer_size` AS `layer_size`,`r`.`star_count` AS `star_count`,`r`.`pull_count` AS `pull_count` from (`list_repo` `r` join `stat_layer` `l`) where (`r`.`_image_name` = `l`.`repo`) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -132,4 +136,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-03-22  9:03:09
+-- Dump completed on 2016-03-22  9:39:59
