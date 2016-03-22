@@ -1,16 +1,46 @@
+get image tag and layer, stat layer
+===========================
+
+
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+
+- [run local imagelayers api server](#run-local-imagelayers-api-server)
+	- [start imagelayers container](#start-imagelayers-container)
+		- [build and run](#build-and-run)
+		- [invoke imagelayers api](#invoke-imagelayers-api)
+	- [fetch tag and layer data](#fetch-tag-and-layer-data)
+		- [batch get tag](#batch-get-tag)
+		- [batch get layers](#batch-get-layers)
+	- [stat layers](#stat-layers)
+- [use imagelayers.io](#use-imagelayersio)
+
+<!-- /TOC -->
+
+> https://github.com/CenturyLinkLabs/imagelayers
+
+
 # run local imagelayers api server
 
 ## start imagelayers container
+
+### build and run
 ```
 //show usage
 $ ./run.sh
-usage:
-  ./run.sh <action>
+  usage:
+    ./run.sh <action>
   <action>:
+    -------------------------------------------------------------
     start_container   # start imagelayer api server container
+    -------------------------------------------------------------
     get_tag           # get image tag list
+    -------------------------------------------------------------
     get_layer_latest  # get layer for image's latest tag(faster)
     get_layer_all     # get layer for image's all tag
+    -------------------------------------------------------------
+    stat_layer        # stat layer of images's tag(result/layers/)
+    -------------------------------------------------------------
+
 
 //start container
 $ ./run.sh start_container
@@ -21,7 +51,7 @@ $ docker ps | grep "imagelayers$"
   06eb3da1af28    xjimmyshcn/imagelayers   "go run main.go"    11 hours ago    Up 11 hours    0.0.0.0:8008->8888/tcp   imagelayers
 ```
 
-## invoke imagelayers api
+### invoke imagelayers api
 ```
 //get tags
 $ curl -s http://127.0.0.1:8008/registry/images/busybox/tags | jq .
@@ -53,9 +83,17 @@ $ curl -s -XPOST -d '{"repos":[{"name":"busybox","tag":"1.24"}]}' http://127.0.0
           "Comment": "",
           "created": "2016-03-18T18:22:48.810791943Z",
           ...
-```
 
-## batch get tag
+//count layers of a image tag
+$ curl -s -XPOST -d '{" repos":[{"name":"busybox","tag":"1.24"}]}' http://127.0.0.1:8008/registry/analyze | jq ".[].repo.count, .[].layers[].id"
+
+  2
+  "bc744c4ab376115cc45c610d53f529dd2d4249ae6b35e5d6e7a96e58863545aa"
+  "56ed16bd6310cca65920c653a9bb22de6b235990dcaa1742ff839867aed730e5"
+```
+## fetch tag and layer data
+
+### batch get tag
 ```
 //prepare image list `etc/image_full.lst`
 $ head -n 10 etc/image_full.lst
@@ -88,7 +126,7 @@ $ tree result/tags/library | head -n 10
 
 ```
 
-## batch get layers
+### batch get layers
 
 > this operation is based on `./run.sh get_tag`
 
@@ -102,6 +140,21 @@ or
 $ ./run.sh get_layer_all
 ```
 
+## stat layers
+```
+$ ./run.sh stat_layer | head -n 10
+  library/nginx,latest,8
+  library/busybox,latest,2
+  library/redis,latest,17
+  library/postgres,latest,22
+  library/registry,latest,14
+  library/ruby,latest,18
+  library/java,latest,14
+  library/python,latest,13
+  library/node,latest,10
+  library/alpine,latest,1
+```
+
 # use imagelayers.io
 
 > invoke online imagelayers api
@@ -112,4 +165,5 @@ $ curl -s https://imagelayers.io:8888/registry/images/busybox/tags | jq .
 
 //get layers
 $ curl -s -XPOST -d '{"repos":[{"name":"busybox","tag":"1.24"}]}' https://imagelayers.io:8888/registry/analyze | jq .
+curl -s -XPOST -d '{" repos":[{"name":"library/ubuntu","tag":"trusty"}]}' https://imagelayers.io:8888/registry/analyze  
 ```

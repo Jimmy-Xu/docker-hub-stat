@@ -208,3 +208,5 @@ JOB_SUCCESS    : ${JOB_SUCCESS}
 JOB_FAIL       : ${JOB_FAIL}
 #######################################
 EOF
+
+echo "done!"

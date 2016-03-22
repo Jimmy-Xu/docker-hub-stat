@@ -47,6 +47,10 @@ function get_layer(){
   ./script/get_layer.sh $1
 }
 
+function stat_layer(){
+  ./script/stat_layer.sh
+}
+
 function show_usage(){
   cat <<EOF
 
@@ -54,12 +58,25 @@ usage:
   ./run.sh <action>
 
 <action>:
+  -------------------------------------------------------------
   start_container   # start imagelayer api server container
+  -------------------------------------------------------------
   get_tag           # get image tag list
+  -------------------------------------------------------------
   get_layer_latest  # get layer for image's latest tag(faster)
   get_layer_all     # get layer for image's all tag
+  -------------------------------------------------------------
+  stat_layer        # stat layer of images's tag(result/layers/)
+  -------------------------------------------------------------
 EOF
 }
+
+############## main ##############
+which jq >/dev/null 2>&1
+if [ $? -ne 0 ];then
+  echo "please install jq first"
+  exit 1
+fi
 
 case $1 in
   start_container)
@@ -74,9 +91,10 @@ case $1 in
   get_layer_latest)
     get_layer "latest"
     ;;
+  stat_layer)
+    stat_layer
+    ;;
   *)
     show_usage
     ;;
 esac
-
-echo "done!"
