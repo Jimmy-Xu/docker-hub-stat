@@ -70,3 +70,20 @@
 				...
 			]
 		}
+
+- **get tag**
+```
+curl -s https://index.docker.io/v1/repositories/library/ubuntu/tags | jq .
+[
+  {
+    "layer": "ab035c88",
+    "name": "latest"
+  },
+  {
+    "layer": "3db9c44f",
+    "name": "10.04"
+  },
+  {
+    "layer": "33eb06bb",
+    "name": "12.04"
+```
