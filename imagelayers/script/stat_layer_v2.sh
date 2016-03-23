@@ -5,6 +5,7 @@
 MAX_NPROC=50
 DELAY_SEC=1
 TMP="/tmp/stat_layer_v2"
+TOFETCH_LST="etc/layer_tofetch.lst"
 FILE_SUCCESS="${TMP}/counter.success"
 FILE_FAIL="${TMP}/counter.fail"
 
@@ -46,9 +47,9 @@ if [ ${TOTAL_FULL} -eq 0 ];then
   exit 1
 fi
 
-# scan fetched result, generate image.lst
+# scan fetched result, generate ${TOFETCH_LST}
 IDX=0
-echo -n > etc/layer_tofetch.lst #clear list
+echo -n > ${TOFETCH_LST} #clear list
 for f in $(find result/tags -name "*.json" -type f)
 do
   IDX=$(( IDX + 1 ))
@@ -83,15 +84,15 @@ do
       echo $l
       if [ ! -s ${layer_f} ];then
         echo "${layer_f} not exist, need fetch"
-        [ "${ADD_FLAG}" == "false" ] && echo -n "${ns_name}/${repo_name} " >> etc/layer_tofetch.lst
-        echo -n "|${l}" >> etc/layer_tofetch.lst
+        [ "${ADD_FLAG}" == "false" ] && echo -n "${ns_name}/${repo_name} " >> ${TOFETCH_LST}
+        echo -n "|${l}" >> ${TOFETCH_LST}
         ADD_FLAG=true
       else
-        grep $l ${layer_f} >/dev/null 2>&1 #check tag in result
+        grep ",$l," ${layer_f} >/dev/null 2>&1 #check tag in result
         if [ $? -ne 0 ];then
           echo "tag '$l' not in result '${layer_f}', need fetch"
-          [ "${ADD_FLAG}" == "false" ] && echo -n "${ns_name}/${repo_name} " >> etc/layer_tofetch.lst
-          echo -n "|${l}" >> etc/layer_tofetch.lst
+          [ "${ADD_FLAG}" == "false" ] && echo -n "${ns_name}/${repo_name} " >> ${TOFETCH_LST}
+          echo -n "|${l}" >> ${TOFETCH_LST}
           ADD_FLAG=true
         fi
       fi
@@ -106,11 +107,11 @@ do
       #echo "[ ${IDX} ] [ ${repo_name} latest ] not exist, get the last tag"
       _TAG=$(echo ${tag_list} | tail -n1 | awk '{print $NF}' )
     fi
-    grep "${_TAG}" ${layer_f} >/dev/null 2>&1
+    grep ",${_TAG}," ${layer_f} >/dev/null 2>&1
     if [ $? -ne 0 ];then
       echo "[ ${IDX} ] [ ${layer_f} ] tag ${_TAG} not in is result, or result file not exist, need fetch"
-      [ "${ADD_FLAG}" == "false" ] && echo -n "${ns_name}/${repo_name} " >> etc/layer_tofetch.lst
-      echo -n "|${_TAG}" >> etc/layer_tofetch.lst
+      [ "${ADD_FLAG}" == "false" ] && echo -n "${ns_name}/${repo_name} " >> ${TOFETCH_LST}
+      echo -n "|${_TAG}" >> ${TOFETCH_LST}
       ADD_FLAG=true
     else
       echo "[ ${IDX} ] [ ${layer_f} ] already exist, skip"
@@ -118,7 +119,7 @@ do
   fi
   if [ "${ADD_FLAG}" == "true" ];then
     #add /n
-    echo >> etc/layer_tofetch.lst
+    echo >> ${TOFETCH_LST}
   fi
 done
 
@@ -150,7 +151,7 @@ echo  >&8
 echo -n 0 > ${FILE_SUCCESS}
 echo -n 0 > ${FILE_FAIL}
 
-# start fetch image tag from etc/layer_tofetch.lst
+# start fetch image tag from ${TOFETCH_LST}
 JOB_TOTAL=0
 
 TOTAL_TOFETCH=$(cat etc/layer_tofetch.lst|wc -l )
