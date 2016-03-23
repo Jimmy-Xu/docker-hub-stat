@@ -29,19 +29,22 @@ get image tag and layer, stat layer
 ```
 //show usage
 $ ./run.sh
-  usage:
-    ./run.sh <action>
-  <action>:
-    -------------------------------------------------------------
-    start_container   # start imagelayer api server container
-    -------------------------------------------------------------
-    get_tag           # get image tag list
-    -------------------------------------------------------------
-    get_layer_latest  # get layer for image's latest tag(faster)
-    get_layer_all     # get layer for image's all tag
-    -------------------------------------------------------------
-    stat_layer        # stat layer of images's tag(result/layers/)
-    -------------------------------------------------------------
+usage:
+  ./run.sh <action>
+<action>:
+  -----------------------------------------------------------------------------------
+  start_container   # start imagelayer api server container
+  -----------------------------------------------------------------------------------
+  get_tag           # get image tag list
+  -----------------------------------------------------------------------------------
+  get_layer_latest_v1  # get layer for image's latest tag(faster)
+  get_layer_all_v1     # get layer for image's all tag
+  stat_layer_v1        # stat layer of image's tag(result/layers/)
+  -----------------------------------------------------------------------------------
+  get_layer_latest_v2  # get layer for image's latest tag(faster)
+  get_layer_all_v2     # get layer for image's all tag
+  stat_layer_v2        # stat layer of image's tag(script/download-frozen-image-v2.sh)
+  -----------------------------------------------------------------------------------
 
 
 //start container
@@ -136,10 +139,10 @@ $ tree result/tags/library | head -n 10
 //each time run this command, it will skip the tag which was already getted
 
 //only get latest tag(faster)
-$ ./run.sh get_layer_latest
+$ ./run.sh get_layer_latest_v2
 or
 // get all tags
-$ ./run.sh get_layer_all
+$ ./run.sh get_layer_all_v2
 ```
 
 ## process result
@@ -147,7 +150,7 @@ $ ./run.sh get_layer_all
 ### stat layer
 ```
 //return (<repo>, <tag>, <layer_count>, <layer_size>)
-$ ./run.sh stat_layer | head -n 10
+$ ./run.sh stat_layer_v1 | head -n 10
 	library/nginx,latest,8,190512459,
 	library/busybox,latest,2,1112820,
 	library/redis,latest,17,177586452,

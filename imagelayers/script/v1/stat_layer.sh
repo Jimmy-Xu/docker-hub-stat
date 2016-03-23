@@ -1,7 +1,7 @@
 #!/bin/bash
 ## base on the result of get_layer.sh
 
-WORKDIR=$(cd `dirname $0`; cd ..; pwd)
+WORKDIR=$(cd `dirname $0`; cd ../..; pwd)
 LAYER_DIR="result/layers"
 OUTPUT="result/stat/v1"
 cd ${WORKDIR}/${LAYER_DIR}

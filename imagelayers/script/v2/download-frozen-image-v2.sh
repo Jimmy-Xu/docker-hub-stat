@@ -1,6 +1,6 @@
 #!/bin/bash
 
-WORKDIR=$(cd `dirname $0`; cd ..; pwd)
+WORKDIR=$(cd `dirname $0`; cd ../..; pwd)
 cd ${WORKDIR}
 
 set -e
@@ -41,6 +41,11 @@ while [ $# -gt 0 ]; do
 		image="library/$image"
 	fi
 
+	_NS=$(echo ${image} | cut -d"/" -f1)
+	_REPO=$(echo ${image} | cut -d"/" -f2)
+	#create result dir
+	[ ! -d ${WORKDIR}/result/stat/v2/${_NS}/${_REPO} ] && mkdir -p ${WORKDIR}/result/stat/v2/${_NS}/${_REPO}
+
   # fetch token in cache
   token=${dic_token[$image]}
   if [ -z $token ];then
@@ -52,29 +57,15 @@ while [ $# -gt 0 ]; do
   fi
 
 	manifestJson="$(curl -sSL -H "Authorization: Bearer $token" "https://registry-1.docker.io/v2/$image/manifests/$digest")"
+	#check json
 	if [ "${manifestJson:0:1}" != '{' ]; then
 		echo >&2 "error: /v2/$image/manifests/$digest returned something unexpected:"
 		echo >&2 "  $manifestJson"
 		exit 1
 	fi
+	echo $manifestJson | jq . > ${WORKDIR}/result/stat/v2/${_NS}/${_REPO}/${digest}.json
 
-	layersFs=$(echo "$manifestJson" | jq --raw-output '.fsLayers | .[] | .blobSum')
-
-	IFS=$'\n'
-	# bash v4 on Windows CI requires CRLF separator
-	if [ "$(go env GOHOSTOS)" = 'windows' ]; then
-		major=$(echo ${BASH_VERSION%%[^0.9]} | cut -d. -f1)
-		if [ "$major" -ge 4 ]; then
-			IFS=$'\r\n'
-		fi
-	fi
-	layers=( ${layersFs} )
-	unset IFS
-
-	history=$(echo "$manifestJson" | jq '.history | [.[] | .v1Compatibility]')
-	imageId=$(echo "$history" | jq --raw-output .[0] | jq --raw-output .id)
-
-	_NS=$(echo ${image} | cut -d"/" -f1)
-	_REPO=$(echo ${image} | cut -d"/" -f2)
-	echo "${image},${tag},${#layers[@]}" >> ${WORKDIR}/result/stat/v2/${_NS}/${_REPO}.csv
+	# layersFs=$(echo "$manifestJson" | jq --raw-output '.fsLayers | .[] | .blobSum')
+	# layers=( ${layersFs} )
+	# echo "${image},${tag},${#layers[@]}" >> ${WORKDIR}/result/stat/v2/${_NS}/${_REPO}.csv
 done

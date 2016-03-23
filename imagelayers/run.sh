@@ -44,17 +44,21 @@ function get_tag(){
   ./script/get_tag.sh
 }
 
-function get_layer(){
-  ./script/get_layer.sh $1
+function get_layer_v1(){
+  ./script/v1/get_layer.sh $1
 }
 
 function stat_layer_v1(){
-  ./script/stat_layer_v1.sh
+  ./script/v1/stat_layer.sh
 }
 
 #-----------------------------
+function get_layer_v2(){
+  ./script/v2/get_layer.sh $1
+}
+
 function stat_layer_v2(){
-  ./script/stat_layer_v2.sh
+  ./script/v2/stat_layer.sh
 }
 
 
@@ -70,11 +74,13 @@ usage:
   -----------------------------------------------------------------------------------
   get_tag           # get image tag list
   -----------------------------------------------------------------------------------
-  get_layer_latest  # get layer for image's latest tag(faster)
-  get_layer_all     # get layer for image's all tag
-  stat_layer_v1     # stat layer of image's tag(result/layers/)
+  get_layer_latest_v1  # get layer for image's latest tag(faster)
+  get_layer_all_v1     # get layer for image's all tag
+  stat_layer_v1        # stat layer of image's tag(result/layers/)
   -----------------------------------------------------------------------------------
-  stat_layer_v2     # stat layer of image's tag(script/download-frozen-image-v2.sh)
+  get_layer_latest_v2  # get layer for image's latest tag(faster)
+  get_layer_all_v2     # get layer for image's all tag
+  stat_layer_v2        # stat layer of image's tag(script/download-frozen-image-v2.sh)
   -----------------------------------------------------------------------------------
 EOF
 }
@@ -93,14 +99,22 @@ case $1 in
   get_tag)
     get_tag
     ;;
-  get_layer_all)
-    get_layer "all"
+  #v1
+  get_layer_all_v1)
+    get_layer_v1 "all"
     ;;
-  get_layer_latest)
-    get_layer "latest"
+  get_layer_latest_v1)
+    get_layer_v1 "latest"
     ;;
   stat_layer_v1)
     stat_layer_v1
+    ;;
+  #v2
+  get_layer_all_v2)
+    get_layer_v2 "all"
+    ;;
+  get_layer_latest_v2)
+    get_layer_v2 "latest"
     ;;
   stat_layer_v2)
     stat_layer_v2
