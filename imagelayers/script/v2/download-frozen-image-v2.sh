@@ -2,6 +2,7 @@
 
 WORKDIR=$(cd `dirname $0`; cd ../..; pwd)
 cd ${WORKDIR}
+OUTPUT_DIR="result/layers/v2"
 
 set -e
 
@@ -44,7 +45,7 @@ while [ $# -gt 0 ]; do
 	_NS=$(echo ${image} | cut -d"/" -f1)
 	_REPO=$(echo ${image} | cut -d"/" -f2)
 	#create result dir
-	[ ! -d ${WORKDIR}/result/stat/v2/${_NS}/${_REPO} ] && mkdir -p ${WORKDIR}/result/stat/v2/${_NS}/${_REPO}
+	[ ! -d ${WORKDIR}/${OUTPUT_DIR}/${_NS}/${_REPO} ] && mkdir -p ${WORKDIR}/${OUTPUT_DIR}/${_NS}/${_REPO}
 
   # fetch token in cache
   token=${dic_token[$image]}
@@ -63,9 +64,9 @@ while [ $# -gt 0 ]; do
 		echo >&2 "  $manifestJson"
 		exit 1
 	fi
-	echo $manifestJson | jq . > ${WORKDIR}/result/stat/v2/${_NS}/${_REPO}/${digest}.json
+	echo $manifestJson | jq . > ${WORKDIR}/${OUTPUT_DIR}/${_NS}/${_REPO}/${digest}.json
 
 	# layersFs=$(echo "$manifestJson" | jq --raw-output '.fsLayers | .[] | .blobSum')
 	# layers=( ${layersFs} )
-	# echo "${image},${tag},${#layers[@]}" >> ${WORKDIR}/result/stat/v2/${_NS}/${_REPO}.csv
+	# echo "${image},${tag},${#layers[@]}" >> ${WORKDIR}/${OUTPUT_DIR}/${_NS}/${_REPO}.csv
 done

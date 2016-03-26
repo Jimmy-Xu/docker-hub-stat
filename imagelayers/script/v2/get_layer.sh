@@ -5,6 +5,7 @@
 MAX_NPROC=50
 DELAY_SEC=1
 TMP="/tmp/get_layer_v2"
+OUTPUT_DIR="result/layers/v2"
 TAG_TOFETCH_LST="etc/tag_tofetch_v2.lst"
 FILE_SUCCESS="${TMP}/counter.success"
 FILE_FAIL="${TMP}/counter.fail"
@@ -185,7 +186,7 @@ do
   read -u6 #fd6
   {
     #exec job
-    RLT_PATH=${WORKDIR}/result/layers/v2/${_NS}
+    RLT_PATH=${WORKDIR}/${OUTPUT_DIR}/${_NS}
     mkdir -p ${RLT_PATH}
 
     EXEC_CMD="${WORKDIR}/script/v2/download-frozen-image-v2.sh ${CMD_ARG}"
