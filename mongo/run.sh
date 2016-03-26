@@ -14,7 +14,7 @@ LOCAL_DB_DIR=`pwd`/db
 SRC_DATA_DIR=`pwd`/..
 
 #port
-LOCAL_PORT="27017"
+LOCAL_PORT="27018"
 
 ############################################################
 #ensure image exist
