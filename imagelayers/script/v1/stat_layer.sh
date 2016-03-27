@@ -2,11 +2,10 @@
 ## base on the result of get_layer.sh
 
 WORKDIR=$(cd `dirname $0`; cd ../..; pwd)
-LAYER_DIR="result/layers"
-OUTPUT="result/stat/v1"
-cd ${WORKDIR}/${LAYER_DIR}
-mkdir -p ${WORKDIR}/${OUTPUT}
-echo "repo,tag,layer_count,layer_size," > ${WORKDIR}/${OUTPUT}/stat_layer.csv
+INPUT_DIR="result/layers/v1"
+OUTPUT_CSV="result/stat/stat_layer_v1.csv"
+cd ${WORKDIR}/${INPUT_DIR}
+echo "repo,tag,layer_count,layer_size," > ${WORKDIR}/${OUTPUT_CSV}
 
 for i in $(find . -name "*.json" -type f)
 do
@@ -16,6 +15,6 @@ do
     echo "$i is not json format,skip"
     continue
   else
-    printf "%s/%s\n" ${LAYER_CNT} ${i/.json/} | awk -F"/" '{if($1!="0,0,")printf "%s/%s,%s,%s\n", $3,$4, $5,$1 }' | tee -a ${WORKDIR}/${OUTPUT}/stat_layer.csv
+    printf "%s/%s\n" ${LAYER_CNT} ${i/.json/} | awk -F"/" '{if($1!="0,0,")printf "%s/%s,%s,%s\n", $3,$4, $5,$1 }' | tee -a ${WORKDIR}/${OUTPUT_CSV}
   fi
 done

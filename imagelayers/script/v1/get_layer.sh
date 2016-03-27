@@ -60,9 +60,10 @@ do
   fi
 
   layer_d=$( echo $f | awk -F"[/.]" '{printf "%s/layers/v1/%s/%s",$1,$3,$4}')
-  repo_name=$( echo $f | awk -F"[/.]" '{printf "%s",$4}')
+  repo_name=$( echo $f | awk -F"[/.]" '{printf "%s/%s", $3, $4}')
 
 #   cat <<EOF
+#
 #   tag_f    : $f
 #   layer_d  : ${layer_d}
 #   repo_name: ${repo_name}

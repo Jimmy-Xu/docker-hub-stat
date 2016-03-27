@@ -3,10 +3,9 @@
 
 WORKDIR=$(cd `dirname $0`; cd ../..; pwd)
 INPUT_DIR="result/layers/v2"
-OUTPUT_DIR="result/stat/v2"
+OUTPUT_CSV="result/stat/stat_layer_v2.csv"
 cd ${INPUT_DIR}
-mkdir -p ${WORKDIR}/${OUTPUT_DIR}
-echo "repo,tag,layer_count" > ${WORKDIR}/${OUTPUT_DIR}/stat_layer.csv
+echo "repo,tag,layer_count" > ${WORKDIR}/${OUTPUT_CSV}
 
 for f in $(find . -name "*.json" -type f)
 do
@@ -19,7 +18,7 @@ do
     continue
   fi
   layers=( ${layersFs} ) #convert to array
-  echo "${_NS}/${_REPO},${_TAG},${#layers[@]}" >> ${WORKDIR}/${OUTPUT_DIR}/stat_layer.csv
+  echo "${_NS}/${_REPO},${_TAG},${#layers[@]}" >> ${WORKDIR}/${OUTPUT_CSV}
 done
 
 echo "done"

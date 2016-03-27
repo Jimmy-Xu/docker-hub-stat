@@ -1,19 +1,20 @@
 get image tag and layer, stat layer
 ===========================
 
-
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [run local imagelayers api server](#run-local-imagelayers-api-server)
 	- [start imagelayers container](#start-imagelayers-container)
 		- [build and run](#build-and-run)
 		- [invoke imagelayers api](#invoke-imagelayers-api)
-	- [fetch tag and layer data](#fetch-tag-and-layer-data)
-		- [batch get tag](#batch-get-tag)
-		- [batch get layers](#batch-get-layers)
-	- [process result](#process-result)
-		- [stat layer](#stat-layer)
-		- [import result/stat/ to mysql](#import-resultstat-to-mysql)
+	- [batch get tag](#batch-get-tag)
+	- [get and stat layers(v1)](#get-and-stat-layersv1)
+		- [get layer(v1)](#get-layerv1)
+		- [stat layer(v1)](#stat-layerv1)
+	- [get and stat layers(v2)](#get-and-stat-layersv2)
+		- [get layer(v2)](#get-layerv2)
+		- [stat layer(v2)](#stat-layerv2)
+	- [import result/stat/ to mysql](#import-resultstat-to-mysql)
 - [use imagelayers.io](#use-imagelayersio)
 
 <!-- /TOC -->
@@ -96,9 +97,8 @@ $ curl -s -XPOST -d '{" repos":[{"name":"busybox","tag":"1.24"}]}' http://127.0.
   "bc744c4ab376115cc45c610d53f529dd2d4249ae6b35e5d6e7a96e58863545aa"
   "56ed16bd6310cca65920c653a9bb22de6b235990dcaa1742ff839867aed730e5"
 ```
-## fetch tag and layer data
 
-### batch get tag
+## batch get tag
 ```
 //prepare image list `etc/image_full.lst`
 $ head -n 10 etc/image_full.lst
@@ -131,9 +131,37 @@ $ tree result/tags/library | head -n 10
 
 ```
 
-### batch get layers
+## get and stat layers(v1)
 
-> this operation is based on `./run.sh get_tag`
+### get layer(v1)
+> this operation is based on `./run.sh get_tag`  
+> require `imagelayers` container  
+> support registry v1  
+
+```
+//each time run this command, it will skip the tag which was already getted
+
+//only get latest tag(faster)
+$ ./run.sh get_layer_latest_v1
+or
+// get all tags
+$ ./run.sh get_layer_all_v1
+```
+
+### stat layer(v1)
+```
+$ ./run.sh stat_layer_v1
+
+//result file
+result/stat/stat_layer_v1.csv
+```
+
+## get and stat layers(v2)
+
+### get layer(v2)
+> this operation is based on `./run.sh get_tag`  
+> require download-frozen-image-v2.sh  
+> support registry v2  
 
 ```
 //each time run this command, it will skip the tag which was already getted
@@ -145,29 +173,15 @@ or
 $ ./run.sh get_layer_all_v2
 ```
 
-## process result
-
-### stat layer
+### stat layer(v2)
 ```
-//return (<repo>, <tag>, <layer_count>, <layer_size>)
-$ ./run.sh stat_layer_v1 | head -n 10
-	library/nginx,latest,8,190512459,
-	library/busybox,latest,2,1112820,
-	library/redis,latest,17,177586452,
-	library/postgres,latest,22,264567018,
-	library/registry,latest,14,422909893,
-	library/ruby,latest,18,725484111,
-	library/java,latest,14,642897103,
-	library/python,latest,13,689550652,
-	library/node,latest,10,644302697,
-	library/alpine,latest,1,4797951,
+$ ./run.sh stat_layer_v2
 
-
-//result data
-result/stat/v1/stat_layer.csv
+//result file
+result/stat/stat_layer_v2.csv
 ```
 
-### import result/stat/ to mysql
+## import result/stat/ to mysql
 
 > base on container `hub-mysql`, [how to run hub-mysql](doc/process_data.md#start-container-hub-mysql-and-hub-phpmyadmin)
 
