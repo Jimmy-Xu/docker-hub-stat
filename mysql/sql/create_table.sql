@@ -130,6 +130,27 @@ SET character_set_client = utf8;
 SET character_set_client = @saved_cs_client;
 
 --
+-- Temporary view structure for view `vw_image_info_v1_right_join_v2`
+--
+
+DROP TABLE IF EXISTS `vw_image_info_v1_right_join_v2`;
+/*!50001 DROP VIEW IF EXISTS `vw_image_info_v1_right_join_v2`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `vw_image_info_v1_right_join_v2` AS SELECT
+ 1 AS `_image_name`,
+ 1 AS `_namespace`,
+ 1 AS `_repo_name`,
+ 1 AS `name`,
+ 1 AS `full_size`,
+ 1 AS `v2`,
+ 1 AS `layer_count`,
+ 1 AS `star_count`,
+ 1 AS `pull_count`,
+ 1 AS `layer_size`*/;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Temporary view structure for view `vw_image_info_v2`
 --
 
@@ -201,6 +222,24 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET collation_connection      = @saved_col_connection */;
 
 --
+-- Final view structure for view `vw_image_info_v1_right_join_v2`
+--
+
+/*!50001 DROP VIEW IF EXISTS `vw_image_info_v1_right_join_v2`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
+/*!50001 VIEW `vw_image_info_v1_right_join_v2` AS select `v2`.`_image_name` AS `_image_name`,`v2`.`_namespace` AS `_namespace`,`v2`.`_repo_name` AS `_repo_name`,`v2`.`name` AS `name`,`v2`.`full_size` AS `full_size`,`v2`.`v2` AS `v2`,`v2`.`layer_count` AS `layer_count`,`v2`.`star_count` AS `star_count`,`v2`.`pull_count` AS `pull_count`,`v1`.`layer_size` AS `layer_size` from (`vw_image_info_v2` `v2` left join `vw_image_info_v1` `v1` on(((`v1`.`_image_name` = `v2`.`_image_name`) and (`v1`.`name` = `v2`.`name`)))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
 -- Final view structure for view `vw_image_info_v2`
 --
 
@@ -263,4 +302,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-03-28  3:51:26
+-- Dump completed on 2016-03-28  4:08:56
