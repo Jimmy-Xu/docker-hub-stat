@@ -11,6 +11,7 @@ list_tag/etc/official
 
 mongo/db
 mysql/db
+mysql/db.tgz
 
 imagelayers/result
 imagelayers/etc/image_tofetch.lst
