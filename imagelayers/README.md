@@ -153,7 +153,7 @@ $ ./run.sh get_layer_all_v1
 $ ./run.sh stat_layer_v1
 
 //result file
-result/stat/stat_layer_v1.csv
+../csv/stat_layer_v1.csv
 ```
 
 ## get and stat layers(v2)
@@ -178,7 +178,7 @@ $ ./run.sh get_layer_all_v2
 $ ./run.sh stat_layer_v2
 
 //result file
-result/stat/stat_layer_v2.csv
+../csv/stat_layer_v2.csv
 ```
 
 ## import result/stat/ to mysql
@@ -186,8 +186,9 @@ result/stat/stat_layer_v2.csv
 > base on container `hub-mysql`, [how to run hub-mysql](doc/process_data.md#start-container-hub-mysql-and-hub-phpmyadmin)
 
 ```
-$ docker exec -it hub-mysql bash -c "mysqlimport --ignore-lines=1 --fields-terminated-by=, --local -u root -paaa123aa docker /data/source/imagelayers/result/stat/v1/stat_layer.csv"
-    docker.stat_layer: Records: 2254  Deleted: 0  Skipped: 0  Warnings: 0
+$ docker exec -it hub-mysql bash -c "mysqlimport --ignore-lines=1 --fields-terminated-by=, --local -u root -paaa123aa docker /data/source/csv/stat_layer_v1.csv"
+
+$ docker exec -it hub-mysql bash -c "mysqlimport --ignore-lines=1 --fields-terminated-by=, --local -u root -paaa123aa docker /data/source/csv/stat_layer_v2.csv"
 ```
 
 # use imagelayers.io

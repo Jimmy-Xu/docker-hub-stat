@@ -25,11 +25,6 @@
 -- Table structure for table `list_repo`
 --
 
-DROP DATABASE IF EXISTS `docker`;
-CREATE DATABASE `docker`;
-
-USE `docker`;
-
 DROP TABLE IF EXISTS `list_repo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -59,7 +54,8 @@ CREATE TABLE `list_tag` (
   `_repo_name` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `full_size` int(11) NOT NULL,
-  `v2` tinyint(1) NOT NULL
+  `v2` tinyint(1) NOT NULL,
+  KEY `_image_name` (`_image_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -82,13 +78,13 @@ CREATE TABLE `search_repo` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `stat_layer`
+-- Table structure for table `stat_layer_v1`
 --
 
-DROP TABLE IF EXISTS `stat_layer`;
+DROP TABLE IF EXISTS `stat_layer_v1`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `stat_layer` (
+CREATE TABLE `stat_layer_v1` (
   `repo` varchar(255) NOT NULL,
   `tag` varchar(255) NOT NULL,
   `layer_count` int(11) NOT NULL,
@@ -98,14 +94,70 @@ CREATE TABLE `stat_layer` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Temporary view structure for view `vw_image_layer`
+-- Table structure for table `stat_layer_v2`
 --
 
-DROP TABLE IF EXISTS `vw_image_layer`;
-/*!50001 DROP VIEW IF EXISTS `vw_image_layer`*/;
+DROP TABLE IF EXISTS `stat_layer_v2`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `stat_layer_v2` (
+  `repo` varchar(255) NOT NULL,
+  `tag` varchar(255) NOT NULL,
+  `layer_count` int(11) NOT NULL,
+  KEY `repo` (`repo`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Temporary view structure for view `vw_image_info_v1`
+--
+
+DROP TABLE IF EXISTS `vw_image_info_v1`;
+/*!50001 DROP VIEW IF EXISTS `vw_image_info_v1`*/;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-/*!50001 CREATE VIEW `vw_image_layer` AS SELECT
+/*!50001 CREATE VIEW `vw_image_info_v1` AS SELECT
+ 1 AS `_image_name`,
+ 1 AS `_namespace`,
+ 1 AS `_repo_name`,
+ 1 AS `name`,
+ 1 AS `full_size`,
+ 1 AS `v2`,
+ 1 AS `layer_count`,
+ 1 AS `layer_size`,
+ 1 AS `star_count`,
+ 1 AS `pull_count`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `vw_image_info_v2`
+--
+
+DROP TABLE IF EXISTS `vw_image_info_v2`;
+/*!50001 DROP VIEW IF EXISTS `vw_image_info_v2`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `vw_image_info_v2` AS SELECT
+ 1 AS `_image_name`,
+ 1 AS `_namespace`,
+ 1 AS `_repo_name`,
+ 1 AS `name`,
+ 1 AS `full_size`,
+ 1 AS `v2`,
+ 1 AS `layer_count`,
+ 1 AS `star_count`,
+ 1 AS `pull_count`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `vw_image_layer_v1`
+--
+
+DROP TABLE IF EXISTS `vw_image_layer_v1`;
+/*!50001 DROP VIEW IF EXISTS `vw_image_layer_v1`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `vw_image_layer_v1` AS SELECT
  1 AS `repo`,
  1 AS `tag`,
  1 AS `layer_count`,
@@ -115,10 +167,26 @@ SET character_set_client = utf8;
 SET character_set_client = @saved_cs_client;
 
 --
--- Final view structure for view `vw_image_layer`
+-- Temporary view structure for view `vw_image_layer_v2`
 --
 
-/*!50001 DROP VIEW IF EXISTS `vw_image_layer`*/;
+DROP TABLE IF EXISTS `vw_image_layer_v2`;
+/*!50001 DROP VIEW IF EXISTS `vw_image_layer_v2`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `vw_image_layer_v2` AS SELECT
+ 1 AS `repo`,
+ 1 AS `tag`,
+ 1 AS `layer_count`,
+ 1 AS `star_count`,
+ 1 AS `pull_count`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Final view structure for view `vw_image_info_v1`
+--
+
+/*!50001 DROP VIEW IF EXISTS `vw_image_info_v1`*/;
 /*!50001 SET @saved_cs_client          = @@character_set_client */;
 /*!50001 SET @saved_cs_results         = @@character_set_results */;
 /*!50001 SET @saved_col_connection     = @@collation_connection */;
@@ -127,7 +195,61 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `vw_image_layer` AS select `l`.`repo` AS `repo`,`l`.`tag` AS `tag`,`l`.`layer_count` AS `layer_count`,`l`.`layer_size` AS `layer_size`,`r`.`star_count` AS `star_count`,`r`.`pull_count` AS `pull_count` from (`list_repo` `r` join `stat_layer` `l`) where (`r`.`_image_name` = `l`.`repo`) */;
+/*!50001 VIEW `vw_image_info_v1` AS select `a`.`_image_name` AS `_image_name`,`a`.`_namespace` AS `_namespace`,`a`.`_repo_name` AS `_repo_name`,`a`.`name` AS `name`,`a`.`full_size` AS `full_size`,`a`.`v2` AS `v2`,`b`.`layer_count` AS `layer_count`,`b`.`layer_size` AS `layer_size`,`b`.`star_count` AS `star_count`,`b`.`pull_count` AS `pull_count` from (`list_tag` `a` join `vw_image_layer_v1` `b`) where ((`a`.`_image_name` = `b`.`repo`) and (`a`.`name` = `b`.`tag`)) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `vw_image_info_v2`
+--
+
+/*!50001 DROP VIEW IF EXISTS `vw_image_info_v2`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
+/*!50001 VIEW `vw_image_info_v2` AS select `a`.`_image_name` AS `_image_name`,`a`.`_namespace` AS `_namespace`,`a`.`_repo_name` AS `_repo_name`,`a`.`name` AS `name`,`a`.`full_size` AS `full_size`,`a`.`v2` AS `v2`,`b`.`layer_count` AS `layer_count`,`b`.`star_count` AS `star_count`,`b`.`pull_count` AS `pull_count` from (`list_tag` `a` join `vw_image_layer_v2` `b`) where ((`a`.`_image_name` = `b`.`repo`) and (`a`.`name` = `b`.`tag`)) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `vw_image_layer_v1`
+--
+
+/*!50001 DROP VIEW IF EXISTS `vw_image_layer_v1`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
+/*!50001 VIEW `vw_image_layer_v1` AS select `l`.`repo` AS `repo`,`l`.`tag` AS `tag`,`l`.`layer_count` AS `layer_count`,`l`.`layer_size` AS `layer_size`,`r`.`star_count` AS `star_count`,`r`.`pull_count` AS `pull_count` from (`list_repo` `r` join `stat_layer_v1` `l`) where (`r`.`_image_name` = `l`.`repo`) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `vw_image_layer_v2`
+--
+
+/*!50001 DROP VIEW IF EXISTS `vw_image_layer_v2`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
+/*!50001 VIEW `vw_image_layer_v2` AS select `l`.`repo` AS `repo`,`l`.`tag` AS `tag`,`l`.`layer_count` AS `layer_count`,`r`.`star_count` AS `star_count`,`r`.`pull_count` AS `pull_count` from (`list_repo` `r` join `stat_layer_v2` `l`) where (`r`.`_image_name` = `l`.`repo`) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -141,4 +263,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-03-22  9:39:59
+-- Dump completed on 2016-03-28  3:51:26

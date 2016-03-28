@@ -3,7 +3,7 @@
 
 WORKDIR=$(cd `dirname $0`; cd ../..; pwd)
 INPUT_DIR="result/layers/v2"
-OUTPUT_CSV="result/stat/stat_layer_v2.csv"
+OUTPUT_CSV="../csv/stat_layer_v2.csv"
 cd ${INPUT_DIR}
 echo "repo,tag,layer_count" > ${WORKDIR}/${OUTPUT_CSV}
 

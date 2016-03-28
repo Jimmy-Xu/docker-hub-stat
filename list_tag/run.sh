@@ -168,8 +168,8 @@ usage: ./run.sh <flag> <option>
   2 rest_page
 eg:
   ./run.sh 1 1 # get 'first page' of 'official' repo tag
-  ./run.sh 1 2 # get 'rest page' of 'custom repo' tag
-  ./run.sh 2 1 # get 'first page' of 'official' repo tag
+  ./run.sh 1 2 # get 'rest page' of 'official' repo tag
+  ./run.sh 2 1 # get 'first page' of 'custom' repo tag
   ./run.sh 2 2 # get 'rest page' of 'custom' repo tag
 EOF
   exit 1
